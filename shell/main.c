@@ -1,22 +1,8 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include "uart.h"
-
-extern void bear();
-extern void getline();
-
-char buffer[80];
+extern void interp();
 
 int main()
     {
-    bear();
-
-    while(true)
-        {
-        putchar('>');
-        getline(buffer, 80);
-        printf("%s\n", buffer);
-        }
+    interp();
 
     return 0;
     }

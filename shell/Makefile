@@ -27,17 +27,13 @@ LDSCRIPT=pdp11.ld
 
 all: $(BINARIES)
 
-%.o: %.cpp
-	@echo [C+]  $<
-	@$(CROSS)g++ $(OPT) $(CPPOPT) $(OPT.$<) $(INC) $(DEFINES) $(DEFINES.$<) $(WARN) -c $<
-
 %.o: %.c
 	@echo [CC]  $<
 	@$(CROSS)gcc $(OPT) $(COPT) $(OPT.$<) $(INC) $(DEFINES) $(DEFINES.$<) $(WARN) -c -o $@ $<
 
 %.o: %.S
 	@echo [AS]  $<
-	@$(CROSS)gcc $(OPT) $(OPT.$<) $(INC) $(DEFINES) $(DEFINES.$<) $(WARN) -c $<
+	@$(CROSS)gcc $(OPT) $(OPT.$<) $(INC) $(DEFINES) $(DEFINES.$<) $(WARN) -c -o $@ $<
 
 main.aout : $(OBJS)
 	@echo [LD] $@
