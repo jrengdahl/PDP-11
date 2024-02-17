@@ -1,59 +1,61 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stddef.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <assert.h>
-#include "CriticalRegion.hpp"
-
-extern int omp_verbose;
-#define DPRINT(level) if(omp_verbose>=level)printf
+#include "PDP-11.h"
 
 extern unsigned _heap_start;
 extern unsigned _heap_end;
 extern uintptr_t _break;
 
+int malloc_verbose = 0;
 
-struct MemBlock
+typedef struct MemBlock
     {
     union
         {
-        MemBlock *next;
+        struct MemBlock *next;
         unsigned bucket;
         };
     uintptr_t useable;
-    };
+    }MemBlock;
 
-static const unsigned MINSIZE = 8;
-static const unsigned MAXSIZE = 1024;
-static const unsigned SIZES = 8;
+#define MINSIZE 8
+#define MAXSIZE 1024
+#define SIZES 8
 
-MemBlock *FreeBlocks[SIZES];
+static MemBlock *FreeBlocks[SIZES];
 
 
-void *malloc(unsigned size)
+void *malloc(size_t size)
     {
     MemBlock *blk = 0;
     unsigned bucket;
+    uint16_t InterruptState;
 
     size = (size+7) & -8;                       // round size up to next 8 bytes
     assert(size >= MINSIZE && size <= MAXSIZE); // make sure it's a valid block size
     bucket = 31-__builtin_clz(size>>2);         // get the bucket number
 
-    CRITICAL_REGION(InterruptLock)
+    InterruptState = __disable_interrupts();
+
+    blk = FreeBlocks[bucket];
+    if(blk != 0)
         {
-        blk = FreeBlocks[bucket];
-        if(blk != 0)
-            {
-            FreeBlocks[bucket] = blk->next;
-            DPRINT(1)("malloc old %8p %u %u\n", blk, size, 1<<(bucket+3));
-            }
-        else
-            {
-            blk = (MemBlock *)_break;
-            _break += (1<<(bucket+3))+4;
-            assert(_break < (uintptr_t)&_heap_end);                 // assert that the heap has not overflowed
-            DPRINT(1)("malloc new %8p %u %u\n", blk, size, 1<<(bucket+3));
-            }
+        FreeBlocks[bucket] = blk->next;
+//        if(malloc_verbose >= 1)printf("malloc old %8p %u %u\n", blk, size, 1<<(bucket+3));
         }
+    else
+        {
+        blk = (MemBlock *)_break;
+        _break += (1<<(bucket+3))+4;
+        assert(_break < (uintptr_t)&_heap_end);                 // assert that the heap has not overflowed
+//        if(malloc_verbose >= 1)printf("malloc new %8p %u %u\n", blk, size, 1<<(bucket+3));
+        }
+
+    __restore_interrupts(InterruptState);
 
     blk->bucket = bucket;
 
@@ -65,14 +67,16 @@ void free(void *ptr)
     {
     MemBlock *blk = (MemBlock *)((uintptr_t)ptr - 4);
     unsigned bucket = blk->bucket;
+    uint16_t InterruptState;
 
-    DPRINT(1)("free %8p %u\n", blk, 1<<(bucket+3));
+//    if(malloc_verbose >= 1)printf("free %8p %u\n", blk, 1<<(bucket+3));
 
-    CRITICAL_REGION(InterruptLock)
-        {
-        blk->next = FreeBlocks[bucket];
-        FreeBlocks[bucket] = blk;
-        }
+    InterruptState = __disable_interrupts();
+
+    blk->next = FreeBlocks[bucket];
+    FreeBlocks[bucket] = blk;
+
+    __restore_interrupts(InterruptState);
     }
 
 

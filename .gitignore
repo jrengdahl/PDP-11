@@ -1,0 +1,16 @@
+*.o
+*.a
+*.list
+*.map
+*.old
+*.aout
+*.bin
+*.cpp
+build/
+cross/obj/
+cross/src/
+newlib-pdp11/
+old/
+pdp11-aout-13/
+test.c
+test/

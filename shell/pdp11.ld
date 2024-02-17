@@ -1,4 +1,6 @@
-ENTRY(0)
+OUTPUT_FORMAT("a.out-pdp11") 
+
+ENTRY(startup)
 
 _memory_start = 0;
 _memory_end = 06000000;
@@ -12,20 +14,23 @@ SECTIONS
 {
   .text :
   {
-    . = ALIGN(2);
+    KEEP (*(.vectors))
+
+    . = 01000;
+    crt0.o(.text)
     *(.text)           /* .text sections (code) */
     *(.text*)          /* .text* sections (code) */
 
     KEEP (*(.init))
     KEEP (*(.fini))
 
-    . = ALIGN(4);
+    . = ALIGN(2);
     _etext = .;        /* define a global symbols at end of code */
   } >RAM
 
   .rodata :
   {
-    . = ALIGN(4);
+    . = ALIGN(2);
     *(.rodata)         /* .rodata sections (constants, strings, etc.) */
     *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
     . = ALIGN(2);

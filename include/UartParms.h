@@ -1,0 +1,20 @@
+#ifndef UARTPARMS_H
+#define UARTPARMS_H
+
+#define HW_UART_BASE 0177560
+
+#define UART_RX_DATA_OFF        002
+#define UART_RX_STATUS_OFF      000
+#define UART_RX_DATA_REG        (HW_UART_BASE + UART_RX_DATA_OFF)
+#define UART_RX_STATUS_REG      (HW_UART_BASE + UART_RX_STATUS_OFF)
+#define UART_RX_STATUS_BIT      7
+#define UART_RX_STATUS_VALUE    1
+
+#define UART_TX_DATA_OFF        006
+#define UART_TX_STATUS_OFF      004
+#define UART_TX_DATA_REG        (HW_UART_BASE + UART_TX_DATA_OFF)
+#define UART_TX_STATUS_REG      (HW_UART_BASE + UART_TX_STATUS_OFF)
+#define UART_TX_STATUS_BIT      7
+#define UART_TX_STATUS_VALUE    1
+
+#endif // UARTPARMS_H

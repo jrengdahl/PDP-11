@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <assert.h>
 
 #define UNUSED __attribute__((__unused__))
@@ -14,10 +15,8 @@ void __assert_func (
     while(true);
     }
 
-void __cxa_pure_virtual()
+void __main()
     {
-    printf("pure virtual called!!!\n");
-    assert(false);
     }
 
 void exit( int exit_code UNUSED)
@@ -32,3 +31,7 @@ int fflush(FILE * UNUSED)
     {
     return 0;
     }
+
+static struct _reent fake_reent;
+
+struct _reent *impure_ptr = &fake_reent;
