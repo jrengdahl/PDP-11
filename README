@@ -1,4 +1,0 @@
-This directory contains a PDP-11 GCC compiler (version 13), binutils, and newlib.
-
-Do not delete the "test" subdir. It contains a Xilinx ISE project which wil be moved later.
-

@@ -60,7 +60,7 @@ void interp()
         HELP(  "Addresses, data, and sizes are generally in hex.")
 
 //              //                              //
-        HELP(  "d <addr> <size>}                dump memory")
+        HELP(  "d <addr> {<size>}               dump memory")
         else if(buf[0]=='d' && buf[1]==' ')                                     // memory dump d <hex address> <size>
             {
             unsigned *a;
