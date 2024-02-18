@@ -1,7 +1,7 @@
 This directory contains:
 -- PDP-11 GCC cross compiler (version 13), binutils, and newlib
 -- a bare metal shell that can be downloaded (via PDP11GUI for example)
-   to a PDP-11 CPU that has a CPU, memory, and a serial console. I
+   to a PDP-11 that has a CPU, memory, and a serial console. I
    tested it using a KDJ11-DS PDP-11/53 CPU board.
 
 The shell implements the following commands:
@@ -12,7 +12,7 @@ The shell implements the following commands:
 
 It has a command line editor with a four-line history buffer.
 
-I built and run the toolchain in a WSL Debian instance on Windows 11, but
+I build and run the toolchain in a WSL Debian instance on Windows 11, but
 this should work on any Linux machine.
 
 The contents of the directory include:

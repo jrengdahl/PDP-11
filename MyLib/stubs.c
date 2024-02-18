@@ -32,6 +32,3 @@ int fflush(FILE * UNUSED)
     return 0;
     }
 
-static struct _reent fake_reent;
-
-struct _reent *impure_ptr = &fake_reent;

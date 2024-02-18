@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
+#include "local.h"
 #include "uart.h"
-
-#define NHISTORY 4
-#define INBUFLEN 80
 
 // getline and associated routines
 // for PDP-11

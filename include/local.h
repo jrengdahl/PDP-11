@@ -3,6 +3,7 @@
 
 #define MAXPRINTF 128
 #define INBUFLEN 80
+#define NHISTORY 4
 
 extern int getdec(const char **p);
 extern uintptr_t gethex(const char **p);

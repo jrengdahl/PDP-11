@@ -2,9 +2,9 @@
 # git clone https://github.com/cptnapalm/newlib-pdp11.git
 
 # Then grep -r for "<<<<", remove the git conflict headers,
-# and the lower section for each conflict.
+# and the second section for each conflict.
 
-# Edit the prefix path below so that points to where you installed
+# Edit the prefix path below so that it points to where you installed
 # the PDP-11 cross compiler..
 
 # This script expects the PDP-11 cross compiler bin directory to be
