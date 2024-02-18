@@ -1,6 +1,7 @@
 This directory contains:
--- PDP-11 GCC cross compiler (version 13), binutils, and newlib
--- a bare metal shell that can be downloaded (via PDP11GUI for example)
+-- scripts to build a PDP-11 GCC cross compiler (version 13), binutils,
+   and newlib.
+-- A bare metal shell that can be downloaded (via PDP11GUI for example)
    to a PDP-11 that has a CPU, memory, and a serial console. I
    tested it using a KDJ11-DS PDP-11/53 CPU board.
 
@@ -23,8 +24,8 @@ The contents of the directory include:
 
 -- build-newlib.sh: This script will download, build, and install an
                     experimental version of newlib from
-                    github.com/cptnapalm/newlib-pdp11.git. The author has
-                    not touched this project since 2018. I have only used
+                    github.com/cptnapalm/newlib-pdp11.git. The original author
+                    has not touched this project since 2018. I have only used
                     a few headers plus ctype from this newlib, but what
                     little I have used seems to work. Check the paths in
                     the script before running it. (This newlib contains
@@ -69,7 +70,7 @@ Edit build-13.sh and build-newlib.sh to make sure the paths are appropriate for 
 GCC
 ===
 
-Run build-13.sh. This will build and install the GCC compiler.
+Run build-13.sh. This will build and install the GCC cross compiler.
 
 Set your PATH to include the PDP-11 compiler binaries, e.g.
 PATH=$HOME/PDP-11/pdp11-aout-13/bin:$PATH
@@ -82,7 +83,7 @@ NEWLIB
 Run the following command (copied from build-newlib.sh, where it is commented out):
 git clone https://github.com/cptnapalm/newlib-pdp11.git
 
-As of February 2024 this newlib repo was left in a dirty state, and the
+As of February 2024 this newlib repo exists in a dirty state, and the
 author has not touched it since 2018. Several files contain git merge
 conflicts that cause compile errors. These will have to be located and
 fixed.
@@ -113,6 +114,8 @@ and the code between the ==== and the >>>>.
 
 Once that is done you can run build-newlib.sh. Ignore warnings about the target system not supporting debug.
 
+TODO -- I should clone this newlib repo and fix the issues.
+
 
 MYLIB
 =====
@@ -136,6 +139,7 @@ command line editor uses VT100 arrow keys.
 
 
 The start address of the shell is 01000 (octal). Telling ODT to start there should give you this:
+(the bear looks a lot better in TeraTerm)
 
 @1000g
 
