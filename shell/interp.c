@@ -14,6 +14,7 @@
 
 extern void bear();
 extern char *strchrnul(const char *s, int c);   // POSIX function but not included in newlib, see https://linux.die.net/man/3/strchr
+extern void threadtest();
 
 
 // print a large number with commas
@@ -199,6 +200,14 @@ void interp()
             }
 
 #endif
+
+
+//              //                              //
+        HELP(  "tt                              thread test")
+        else if(buf[0]=='t' && buf[1]=='t')
+            {
+            threadtest();
+            }            
 
 
         // print the help screen

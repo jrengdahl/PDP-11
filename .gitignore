@@ -1,5 +1,6 @@
 *.o
 *.a
+*.d
 *.list
 *.map
 *.old
