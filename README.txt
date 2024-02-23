@@ -9,6 +9,7 @@ The shell implements the following commands:
 -- dump
 -- modify
 -- fill
+-- thread test
 -- help (type ?)
 
 It has a command line editor with a four-line history buffer.
@@ -172,6 +173,76 @@ f <addr> <size> <data>          fill memory
 >
 
 Type ? to get the help screen.
+
+
+THREADS
+=======
+A bare metal threading system has been implemented for the PDP-11. A thread is declared as:
+
+    int thread(int arg1, int arg2);
+
+This following typedef makes it easier to refer to thread functions:
+
+    typedef int THREADFUNCTION(int arg1, int arg2);
+
+You can pass two arguments to the thread when it is spawned. This enables you to distinguish
+multiple threads that are running the same code. If a thread does not require arguments 
+dummy values such as zero can be passed.
+
+Calling spawn creates a new thread. The stack pointer should point to one past the end of an
+array of int, which will serve as the thread's stack. Make sure the stack is large enough
+to handle all functions that the thread might call, plus some extra for interrupts. There is
+no check for stack overflow.
+
+    void spawn(THREADFUNCTION *code, int *stack_pointer, int arg1, int arg2);     
+
+A PORT is a pointer to a chain of threads which are waiting for an event. In the case of a PORT,
+the chain is last-in-first-out (LIFO). This is probably not fair, but it is fast and simple.
+PORTs are probably best suited for cases where there are one or very few threads which might
+wait for an event. It is possible to implement other PORT-like objects which have FIFO
+behavior, though they will have higher overhead.
+
+    typedef int *PORT;
+
+The wait function suspends a thread at a PORT until it is waked by another thread calling
+wake. The wait function can return an argument passed from wake.
+
+    int wait(PORT *port);
+
+The wake function wakes a thread which is suspended at a PORT. The argument passed to the wake call
+is returned from the corresponding wait, thus one thread can wait for a message, and a second thread
+can wake the first thread and pass a message to it by calling wake. The call to wake returns 1 if
+there was a thread waiting at the port and the message was passed, or 0 if there was no thread waiting
+at the port and the message was not passed. In the latter case the calling thread must ensure that
+the message is not lost; the PORT will not queue the message.
+
+    int wake(PORT *port, int arg);
+
+If a thread completes its task and wishes to terminate, it returns from the thread function. The value
+returned can be retrieved by another thread which is waiting for the thread to terminate. Two functions
+are used to rendezvous with a terminating thread.
+
+The function rendezvous_test takes as an argument the initial stack pointer that was passed when the
+thread was spawned. It returns 1 if the thread has terminated, or 0 if the thread is still running.
+If this function is called before the thread is spawned or after the thread has been re-spawned the
+result is indeterminate.
+
+    int rendezvous_test(int *stack_pointer);
+
+After a thread has terminated, rendezvous_return_value can be used to obtain the value returned from the
+terminated thread. Like rendezvous_test, it takes the thread's stack pointer as an argument.
+
+    int rendevous_return_value(int *stack_pointer);
+
+The rendezvous functions use the last word of the stack as a flag to signal thread termination, and
+the second to last word to return the value. The spawn function clears the flag before the thread is
+started. Spawn passes the arguments to the new thread using the second and third from last words of
+the thread's stack. The fourth from last word contains the return address which will point to the
+code that handles winding down the thread and resuming the next pending thread.
+
+A thread which spawns or wakes another thread is suspended and placed at the top of an internal
+pending chain. When a thread waits at a PORT, or terminates, it resumes the next pending thread
+from the top of the pending chain.
 
 
 CREDITS
