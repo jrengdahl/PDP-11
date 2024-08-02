@@ -1,0 +1,12 @@
+#!/bin/bash
+
+pdp11-aout-gcc \
+-c \
+-m45 \
+-mfpu \
+-Os \
+-I /home/engdahl/PDP-11/include \
+-Wall \
+-Wextra \
+-std=gnu17  \
+$2 $3 $4 $5 $6 $7 $8 $9 $1
