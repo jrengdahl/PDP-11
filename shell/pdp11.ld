@@ -14,9 +14,6 @@ SECTIONS
 {
   .text :
   {
-    KEEP (*(.vectors))
-
-    . = 01000;
     crt0.o(.text)
     *(.text)           /* .text sections (code) */
     *(.text*)          /* .text* sections (code) */

@@ -3,6 +3,11 @@
 .globl  _main
 
 .globl  startup
+
+    br startup
+
+    .space 510
+
 startup:
     mov     $-020000,sp     / set init stack pointer
 

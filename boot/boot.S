@@ -1,8 +1,47 @@
+// boot.S
+// 2024 Jonathan R. Engdahl
+
+// This is a bootstrap loader for the Bear Metal MSCP solid state drive.
+// It is based in part on the bootloader in SIMH, found in pdp11_rq.c.
+// The following is the attribution for that source:
+
+/* pdp11_rq.c: MSCP disk controller simulator
+
+   Copyright (c) 2002-2013, Robert M Supnik
+   Derived from work by Stephen F. Shirron
+
+   Permission is hereby granted, free of charge, to any person obtaining a
+   copy of this software and associated documentation files (the "Software"),
+   to deal in the Software without restriction, including without limitation
+   the rights to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Software, and to permit persons to whom the
+   Software is furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+   ROBERT M SUPNIK BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+   Except as contained in this notice, the name of Robert M Supnik shall not be
+   used in advertising or otherwise to promote the sale, use or other dealings
+   in this Software without prior written authorization from Robert M Supnik.
+*/
+
+// I also made reference to other bootloaders such as those found at
+// https://www.ibiblio.org/pub/academic/computer-science/history/pdp-11/bootstraps
+
+
     .org 173000
 
-    reply_packet = 7004
-    cmd_packet = 7104 
-    comm_area = 7204
+    base = 040000
+    reply_packet = bse + 4
+    cmd_packet = base + 104 
+    comm_area = base + 204
 
 // Four step init process
 
@@ -11,7 +50,7 @@ start:
         mov     $unit,r0        // the disk unit number, default 0
         mov     $172150, r1     // address of the IP register
         mov     $table, r4      // address of the table of constants    
-        mov     $4000,r5        // s1 mask, this will become s2, s3, and s4 as it is shfted left in the loop
+        mov     $4000,r5        // s1 mask, this will become s2, s3, and s4 as it is shifted left in the loop
         mov     r1,r2           // get the address of the SA register
         clr     (r2)+           // write to IP, resetting the controller, and increment r2 to point to SA
 
