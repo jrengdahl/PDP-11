@@ -15,3 +15,12 @@ old/
 pdp11-aout-13/
 test.c
 test/
+/boot/boot-GPT.c
+/boot/bootloaders/ChatGPT-example.S
+/boot/bootloaders/M9301-YB Bootstrap_Terminator ROM dumps _ listings_.html
+/boot/bootloaders/mscp_rt11.txt
+/boot/bootloaders/tmscp_boot.txt
+/boot/foo.s
+/boot/list
+/boot/octal.txt
+/foo.c
