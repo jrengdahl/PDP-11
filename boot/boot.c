@@ -14,6 +14,7 @@ struct longword
 
 
 #define COMPILE_BARRIER  __asm__ __volatile__("":::"memory")
+#define halt()  __asm__ __volatile__("halt")
 
 
 struct unit_identifier
@@ -108,7 +109,7 @@ struct response
                 uword lo;
                 word hi;
                 }unit_size;                      // size in LBNs
-            long        volume_serial_number;           // optional, often zero
+            long        volume_serial_number;    // optional, often zero
             };
 
         // read parameters
@@ -151,9 +152,8 @@ typedef void FN();
 
 
 
-void error();
 void do_step(word mask, word response);
-void clear_packets();
+void clear_memory();
 void send_and_wait();
 
 void boot()
@@ -162,13 +162,14 @@ void boot()
     struct command *cmd = (struct command *)CMD_PACKET;
     int read_size;
 
+    clear_memory();
+
     IP = 0;
     do_step(004000, 0100000);
     do_step(010000, COMM_AREA);
     do_step(020000, 0000000);
     do_step(040000, 0000001);
 
-    clear_packets();
     cmd->msglen = 32;
     cmd->opcode = 011;
     send_and_wait();
@@ -183,7 +184,7 @@ void boot()
         read_size = rsp->unit_size.lo * 512;
         }
 
-    clear_packets();
+    clear_memory();
     cmd->msglen = 64;
     cmd->opcode = 041;
     cmd->bytecount = read_size;
@@ -203,7 +204,7 @@ void do_step(word mask, word response)
     do
         {
         sa = SA;
-        if(sa<0)error();
+        if(sa<0)halt();
         }
     while((sa&mask) == 0);
 
@@ -213,10 +214,7 @@ void do_step(word mask, word response)
 
 void clear_packets()
     {
-    for(word *p = (word *)BASE; p<(word *)COMM_AREA;)
-        {
-        *p++ = 0;
-        }
+    for(word *p = (word *)BASE; p<(word *)(BASE+300); *p++ = 0);
     }
 
 void send_and_wait()
@@ -237,16 +235,10 @@ void send_and_wait()
     do
         {
         COMPILE_BARRIER;
-        if(SA<0)error();
+        if(SA<0)halt();
         }
     while(fifos->rsp.hi < 0);
 
-    if(rsp->status != 0)error();
-    }
-
-
-void error()
-    {
-    while(1);
+    if(rsp->status != 0)halt();
     }
 
