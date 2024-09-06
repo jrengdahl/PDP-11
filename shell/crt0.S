@@ -4,9 +4,9 @@
 
 .globl  startup
 
-    br startup
+    jmp startup
 
-    .space 510
+    .space 508
 
 startup:
     mov     $-020000,sp     / set init stack pointer
